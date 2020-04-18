@@ -191,6 +191,8 @@ namespace Breeze
                 drawIconSierraMonochromeSymbols( painter );
             else if ( d && d->internalSettings()->buttonStyle() == 13 )
                 drawIconDarkAuroraeMonochromeSymbols( painter );
+            else if ( d && d->internalSettings()->buttonStyle() == 14 )
+                drawIconNord( painter );
 
         }
 
@@ -3747,6 +3749,320 @@ namespace Breeze
                 symbol_pen.setColor(mycolor);
                 painter->setPen( symbol_pen );
 
+                // it's a question mark
+
+                painter->setPen( symbol_pen );
+                int startAngle = 260 * 16;
+                int spanAngle = 280 * 16;
+                painter->drawArc( QRectF( 6, 4, 6, 6), startAngle, spanAngle );
+
+                painter->setBrush(QBrush(symbolColor));
+                r = static_cast<qreal>(1);
+                c = QPointF (static_cast<qreal>(9), static_cast<qreal>(13));
+                painter->drawEllipse( c, r, r );
+
+                break;
+            }
+
+            default: break;
+        }
+    }
+
+    //__________________________________________________________________
+    void Button::drawIconNord( QPainter *painter ) const
+    {
+
+        painter->setRenderHints( QPainter::Antialiasing );
+
+        /*
+        scale painter so that its window matches QRect( -1, -1, 20, 20 )
+        this makes all further rendering and scaling simpler
+        all further rendering is preformed inside QRect( 0, 0, 18, 18 )
+        */
+        painter->translate( geometry().topLeft() );
+
+        const qreal width( m_iconSize.width() );
+        painter->scale( width/20, width/20 );
+        painter->translate( 1, 1 );
+
+        QColor darkSymbolColor = QColor(59, 66, 82);
+        QColor lightSymbolColor = QColor(250, 251, 252);
+        QColor symbolColor = darkSymbolColor;
+
+        auto d = qobject_cast<Decoration*>( decoration() );
+        QColor titleBarColor (d->titleBarColor());
+
+        // symbols pen
+
+        QPen symbol_pen( symbolColor );
+        symbol_pen.setJoinStyle( Qt::MiterJoin );
+        symbol_pen.setWidthF( 1.2*qMax((qreal)1.0, 20/width ) );
+
+        switch( type() )
+        {
+
+            case DecorationButtonType::Close:
+            {
+                QColor button_color = QColor(191, 97, 106);
+                button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+                // it's a cross
+                painter->drawLine( QPointF( 5, 5 ), QPointF( 13, 13 ) );
+                painter->drawLine( QPointF( 5, 13 ), QPointF( 13, 5 ) );
+
+                break;
+            }
+
+            case DecorationButtonType::Maximize:
+            {
+                QColor button_color = QColor(163, 190, 140);
+                button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+
+                // solid vs. open rectangle
+                if( isChecked() )
+                {
+                    painter->drawLine( QPointF( 4.5, 6 ), QPointF( 13.5, 6 ) );
+                    painter->drawLine( QPointF( 13.5, 6 ), QPointF( 13.5, 12 ) );
+                    painter->drawLine( QPointF( 4.5, 6 ), QPointF( 4.5, 12 ) );
+                    painter->drawLine( QPointF( 4.5, 12 ), QPointF( 13.5, 12 ) );
+                }
+                else
+                {
+                    painter->drawLine( QPointF( 4.5, 4.5 ), QPointF( 13.5, 4.5 ) );
+                    painter->drawLine( QPointF( 13.5, 4.5 ), QPointF( 13.5, 9 ) );
+                    painter->drawLine( QPointF( 4.5, 9 ), QPointF( 4.5, 13.5 ) );
+                    painter->drawLine( QPointF( 4.5, 13.5 ), QPointF( 13.5, 13.5 ) );
+                }
+
+                break;
+            }
+
+            case DecorationButtonType::Minimize:
+            {
+                QColor button_color = QColor(235, 203, 139);
+
+                button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+                // it's a horizontal line
+                painter->drawLine( QPointF( 5, 9 ), QPointF( 13, 9 ) );
+
+                break;
+            }
+
+            case DecorationButtonType::OnAllDesktops:
+            {
+                QColor button_color = QColor(94, 129, 172);
+                if ( !isChecked() )
+                    button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = symbolColor;
+                if ( !isChecked() )
+                  mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+
+                if (isChecked())
+                {
+                  painter->drawLine( QPointF( 5, 5 ), QPointF( 11, 5 ) );
+                  painter->drawLine( QPointF( 11, 5 ), QPointF( 11, 11 ) );
+                  painter->drawLine( QPointF( 5, 5 ), QPointF( 5, 11 ) );
+                  painter->drawLine( QPointF( 5, 11 ), QPointF( 11, 11 ) );
+
+                  painter->drawLine( QPointF( 7, 7 ), QPointF( 13, 7 ) );
+                  painter->drawLine( QPointF( 13, 7 ), QPointF( 13, 13 ) );
+                  painter->drawLine( QPointF( 7, 7 ), QPointF( 7, 13 ) );
+                  painter->drawLine( QPointF( 7, 13 ), QPointF( 13, 13 ) );
+                }
+                else {
+                  painter->drawLine( QPointF( 7, 5 ), QPointF( 15, 5 ) );
+                  painter->drawLine( QPointF( 15, 5 ), QPointF( 15, 13 ) );
+                  painter->drawLine( QPointF( 7, 5 ), QPointF( 7, 13 ) );
+                  painter->drawLine( QPointF( 7, 13 ), QPointF( 15, 13 ) );
+
+                  painter->drawLine( QPointF( 3, 5 ), QPointF( 3, 13 ) );
+                  painter->drawLine( QPointF( 3, 5 ), QPointF( 4.5, 5 ) );
+                  painter->drawLine( QPointF( 3, 13 ), QPointF( 4.5, 13 ) );
+                }
+                break;
+            }
+
+            case DecorationButtonType::Shade:
+            {
+                QColor button_color = QColor(216, 222, 233);
+                if ( !isChecked() )
+                    button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = symbolColor;
+                if ( !isChecked() )
+                  mycolor = this->mixColors(button_color.darker (100), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+                // if (isChecked())
+                // {
+                  painter->drawLine( QPointF( 4, 12 ), QPointF( 14, 12 ) );
+                  painter->setBrush(QBrush(symbolColor));
+                  painter->drawEllipse( QRectF( 8, 6, 2, 2 ) );
+                // }
+                // else {
+                //   painter->drawLine( QPointF( 4, 6 ), QPointF( 14, 6 ) );
+                //   painter->setBrush(QBrush(mycolor));
+                //   painter->drawEllipse( QRectF( 8, 10, 2, 2 ) );
+                // }
+
+                break;
+
+            }
+
+            case DecorationButtonType::KeepBelow:
+            {
+                QColor button_color = QColor(208, 135, 112);
+                if ( !isChecked() )
+                    button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = symbolColor;
+                if ( !isChecked() )
+                  mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+                painter->drawPolyline( QVector<QPointF>{
+                           QPointF( 4, 7 ),
+                           QPointF( 9, 12 ),
+                           QPointF( 14, 7 ) });
+
+                break;
+
+            }
+
+            case DecorationButtonType::KeepAbove:
+            {
+                QColor button_color = QColor(143, 188, 187);
+                if ( !isChecked() )
+                    button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = symbolColor;
+                if ( !isChecked() )
+                  mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
+                painter->drawPolyline( QVector<QPointF>{
+                           QPointF( 4, 11 ),
+                           QPointF( 9, 6 ),
+                           QPointF( 14, 11 )});
+
+                break;
+            }
+
+            case DecorationButtonType::ApplicationMenu:
+            {
+                QColor menuSymbolColor;
+
+                uint r = qRed(titleBarColor.rgb());
+                uint g = qGreen(titleBarColor.rgb());
+                uint b = qBlue(titleBarColor.rgb());
+                // modified from https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+                // qreal titleBarLuminance = (0.2126 * static_cast<qreal>(r) + 0.7152 * static_cast<qreal>(g) + 0.0722 * static_cast<qreal>(b)) / 255.;
+                // if ( titleBarLuminance >  sqrt(1.05 * 0.05) - 0.05 )
+                qreal colorConditional = 0.299 * static_cast<qreal>(r) + 0.587 * static_cast<qreal>(g) + 0.114 * static_cast<qreal>(b);
+                if ( colorConditional > 186 || g > 186 )
+                    menuSymbolColor = darkSymbolColor;
+                else
+                    menuSymbolColor = lightSymbolColor;
+
+                QPen menuSymbol_pen( menuSymbolColor );
+                menuSymbol_pen.setJoinStyle( Qt::MiterJoin );
+                menuSymbol_pen.setWidthF( 1.7*qMax((qreal)1.0, 20/width ) );
+
+                painter->setPen( menuSymbol_pen );
+
+                painter->drawLine( QPointF( 3.5, 5 ), QPointF( 14.5, 5 ) );
+                painter->drawLine( QPointF( 3.5, 9 ), QPointF( 14.5, 9 ) );
+                painter->drawLine( QPointF( 3.5, 13 ), QPointF( 14.5, 13 ) );
+
+                break;
+            }
+
+            case DecorationButtonType::ContextHelp:
+            {
+                QColor button_color = QColor(216, 222, 233);
+                button_color.setAlpha( button_color.alpha()*m_opacity );
+                painter->setPen( Qt::NoPen );
+                painter->setBrush( button_color );
+
+                qreal r = this->buttonRadius();
+                QPointF c(static_cast<qreal>(9), static_cast<qreal>(9));
+                painter->drawEllipse( c, r, r );
+                painter->setBrush( Qt::NoBrush );
+
+                button_color.setAlpha( 255 );
+                QColor mycolor = this->mixColors(button_color.darker( 100 ), symbolColor, m_opacity);
+                symbol_pen.setColor(mycolor);
+                painter->setPen( symbol_pen );
                 // it's a question mark
 
                 painter->setPen( symbol_pen );
